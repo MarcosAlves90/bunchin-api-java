@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bunchin API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .orange-filter {
+            filter: brightness(0) saturate(100%) invert(48%) sepia(92%) saturate(3270%) hue-rotate(7deg) brightness(102%) contrast(101%);
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen flex items-center justify-center px-4">
+    <div class="text-center w-full max-w-2xl">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" alt="API Logo" class="w-20 mx-auto mb-6 orange-filter" />
+        <h1 class="text-3xl font-bold text-orange-500 mb-4">Bem-vindo à API da plataforma Bunchin</h1>
+        <p class="text-lg mb-8 text-gray-200">
+            API para gerenciamento de funcionários e controle de pontos.<br />
+            Utilize os endpoints abaixo para acessar os dados.
+        </p>
+        <ul class="text-left inline-block space-y-3">
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>GET</b> /api/funcionario</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>GET</b> /api/funcionario/{cpf}</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>POST</b> /api/funcionario</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>POST</b> /api/login</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>GET</b> /api/ponto</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>POST</b> /api/ponto</li>
+        </ul>
+        <p class="mt-10 text-sm text-gray-500">Desenvolvido por Bunchin Team</p>
+    </div>
+</body>
+</html>

@@ -10,8 +10,8 @@ public class Ponto {
     @Column(name = "id_ponto", length = 36)
     private String idPonto;
 
-    @ManyToOne
-    @JoinColumn(name = "funcionario_fk", referencedColumnName = "n_registro", nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "funcionario_fk", referencedColumnName = "cpf", nullable = true)
     private Funcionario funcionario;
 
     @Column(name = "nome_tipo", length = 20, nullable = false)
