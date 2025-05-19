@@ -3,6 +3,8 @@ package br.com.fatecmaua.bunchin.model;
 import jakarta.persistence.*;
 import java.time.Instant;
 
+import br.com.fatecmaua.bunchin.util.InstantStringAttributeConverter;
+
 @Entity
 @Table(name = "tb_ponto")
 public class Ponto {
@@ -18,6 +20,7 @@ public class Ponto {
     private String nomeTipo;
 
     @Column(name = "data_hora", nullable = false)
+    @Convert(converter = InstantStringAttributeConverter.class)
     private Instant dataHora;
 
     public Ponto() {}
