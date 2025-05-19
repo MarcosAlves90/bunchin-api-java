@@ -144,21 +144,21 @@ public class FuncionarioController {
     }
 
     @GetMapping("/ponto/{id}")
-    public Ponto getPontoById(@PathVariable String id) {
+    public Ponto getPontoById(@PathVariable UUID id) {
         return pontoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping("/ponto")
     public ResponseEntity<?> createPonto(@RequestBody Ponto ponto) {
-        if (ponto.getIdPonto() == null || ponto.getIdPonto().isEmpty()) {
-            ponto.setIdPonto(UUID.randomUUID().toString());
+        if (ponto.getUuid() == null) {
+            ponto.setUuid(UUID.randomUUID());
         }
         pontoRepository.save(ponto);
         return ResponseEntity.ok().body("Record created successfully.");
     }
 
     @PutMapping("/ponto/{id}")
-    public ResponseEntity<?> updatePonto(@PathVariable String id, @RequestBody Ponto ponto) {
+    public ResponseEntity<?> updatePonto(@PathVariable UUID id, @RequestBody Ponto ponto) {
         Optional<Ponto> existing = pontoRepository.findById(id);
         if (existing.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -172,7 +172,7 @@ public class FuncionarioController {
     }
 
     @DeleteMapping("/ponto/{id}")
-    public ResponseEntity<?> deletePonto(@PathVariable String id) {
+    public ResponseEntity<?> deletePonto(@PathVariable UUID id) {
         Optional<Ponto> existing = pontoRepository.findById(id);
         if (existing.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
