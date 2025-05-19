@@ -2,6 +2,7 @@ package br.com.fatecmaua.bunchin.model;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.util.UUID;
 
 import br.com.fatecmaua.bunchin.util.InstantStringAttributeConverter;
 
@@ -9,8 +10,8 @@ import br.com.fatecmaua.bunchin.util.InstantStringAttributeConverter;
 @Table(name = "tb_ponto")
 public class Ponto {
     @Id
-    @Column(name = "id_ponto", length = 36)
-    private String idPonto;
+    @Column(name = "id_ponto", columnDefinition = "uuid")
+    private UUID uuid;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "funcionario_fk", referencedColumnName = "cpf", nullable = true)
@@ -25,19 +26,19 @@ public class Ponto {
 
     public Ponto() {}
 
-    public Ponto(String idPonto, Funcionario funcionario, String nomeTipo, Instant dataHora) {
-        this.idPonto = idPonto;
+    public Ponto(UUID uuid, Funcionario funcionario, String nomeTipo, Instant dataHora) {
+        this.uuid = uuid;
         this.funcionario = funcionario;
         this.nomeTipo = nomeTipo;
         this.dataHora = dataHora;
     }
 
-    public String getIdPonto() {
-        return idPonto;
+    public UUID getUuid() {
+        return uuid;
     }
 
-    public void setIdPonto(String idPonto) {
-        this.idPonto = idPonto;
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public Funcionario getFuncionario() {
