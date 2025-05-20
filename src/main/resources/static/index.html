@@ -4,15 +4,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bunchin API</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/616/616430.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .orange-filter {
             filter: brightness(0) saturate(100%) invert(48%) sepia(92%) saturate(3270%) hue-rotate(7deg) brightness(102%) contrast(101%);
         }
+        body {
+            background-color: #38858a;
+        }
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #f97316 0%, #ff5722 100%);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #23272f;
+            border-radius: 8px;
+        }
+        /* Firefox */
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: #f97316 #23272f;
+        }
     </style>
 </head>
-<body class="bg-black text-white min-h-screen flex items-center justify-center px-4">
-    <div class="text-center w-full max-w-2xl">
+<body class="bg-[#11171f] text-white min-h-screen h-full flex items-center justify-center p-10">
+    <main class="text-center w-full max-w-2xl min-h-screen">
         <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" alt="API Logo" class="w-20 mx-auto mb-6 orange-filter" />
         <h1 class="text-3xl font-bold text-orange-500 mb-4">Bem-vindo à API da plataforma Bunchin</h1>
         <p class="text-lg mb-8 text-gray-200">
@@ -20,14 +41,29 @@
             Utilize os endpoints abaixo para acessar os dados.
         </p>
         <ul class="text-left inline-block space-y-3">
+            <li class="font-bold text-orange-400 mt-2 text-center">Funcionário</li>
             <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>GET</b> /api/funcionario</li>
             <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>GET</b> /api/funcionario/{cpf}</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>GET</b> /api/funcionario/busca?nome=substring</li>
             <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>POST</b> /api/funcionario</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>PUT</b> /api/funcionario/{cpf}</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>DELETE</b> /api/funcionario/{cpf}</li>
+            <li class="font-bold text-orange-400 mt-4 text-center">Login</li>
             <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>POST</b> /api/login</li>
+            <li class="font-bold text-orange-400 mt-4 text-center">Ponto</li>
             <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>GET</b> /api/ponto</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>GET</b> /api/ponto/{id}</li>
             <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>POST</b> /api/ponto</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>PUT</b> /api/ponto/{id}</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>DELETE</b> /api/ponto/{id}</li>
+            <li class="font-bold text-orange-400 mt-4 text-center">Reset de Senha</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>POST</b> /api/storeResetCode</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>POST</b> /api/checkEmailExists</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>POST</b> /api/verifyResetCode</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>PUT</b> /api/resetPassword</li>
+            <li class="bg-gray-800 border-l-4 border-orange-500 px-4 py-2 rounded"><b>PUT</b> /api/newPassword</li>
         </ul>
         <p class="mt-10 text-sm text-gray-500">Desenvolvido por Bunchin Team</p>
-    </div>
+    </main>
 </body>
 </html>
