@@ -6,6 +6,9 @@
 ![GitHub forks](https://img.shields.io/github/forks/MarcosAlves90/bunchin-api-java?style=for-the-badge)
 ![Bitbucket open issues](https://img.shields.io/bitbucket/issues/MarcosAlves90/bunchin-api-java?style=for-the-badge)
 ![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/MarcosAlves90/bunchin-api-java?style=for-the-badge)
+![GitHub License](https://img.shields.io/github/license/MarcosAlves90/bunchin-api-java?style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/MarcosAlves90/bunchin-api-java?style=for-the-badge)
+![Open Source Love](https://img.shields.io/badge/Open%20Source-%E2%9D%A4-red?style=for-the-badge)
 
 ## Descrição
 
@@ -21,13 +24,14 @@ O **bunchin-api-java** é uma API REST desenvolvida em Java com Spring Boot, vol
 
 ## Tecnologias Utilizadas
 
-- Java 17
-- Spring Boot 3.4.4
+![Java Version](https://img.shields.io/badge/Java-17-blue?style=for-the-badge&logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.4-brightgreen?style=for-the-badge&logo=springboot)
+![Docker](https://img.shields.io/badge/Docker-ready-blue?style=for-the-badge&logo=docker)
+
 - Spring Data JPA
 - Spring Security
 - PostgreSQL
 - Maven
-- Docker
 
 ## Pré-requisitos
 
