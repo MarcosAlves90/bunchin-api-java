@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.fatecmaua</groupId>
-	<artifactId>fatec-music</artifactId>
+	<artifactId>bunchin-api-java</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>fatec-music</name>
+	<name>bunchin-api-java</name>
 	<description>Este é um projeto de gerenciamento de músicas, bandas e integrantes</description>
 	<url/>
 	<licenses>
