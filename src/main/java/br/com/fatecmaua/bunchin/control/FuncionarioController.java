@@ -149,12 +149,24 @@ public class FuncionarioController {
     }
 
     @PostMapping("/ponto")
-    public ResponseEntity<?> createPonto(@RequestBody Ponto ponto) {
-        if (ponto.getUuid() == null) {
+    public ResponseEntity<?> createPonto(@RequestBody PontoRequest pontoRequest) {
+        Ponto ponto = new Ponto();
+        if (pontoRequest.getId_ponto() != null) {
+            ponto.setUuid(UUID.fromString(pontoRequest.getId_ponto()));
+        } else {
             ponto.setUuid(UUID.randomUUID());
         }
+        ponto.setNomeTipo(pontoRequest.getNome_tipo());
+        ponto.setDataHora(Instant.parse(pontoRequest.getData_hora()));
+        if (pontoRequest.getFuncionario_fk() != null) {
+            String cpf = pontoRequest.getFuncionario_fk();
+            funcionarioRepository.findByCpf(cpf).ifPresentOrElse(
+                ponto::setFuncionario,
+                () -> { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "funcionario_fk (CPF) inválido"); }
+            );
+        }
         pontoRepository.save(ponto);
-        return ResponseEntity.ok().body("Record created successfully.");
+        return ResponseEntity.ok().body("Registro criado com êxito.");
     }
 
     @PutMapping("/ponto/{id}")
@@ -168,9 +180,9 @@ public class FuncionarioController {
         p.setNomeTipo(ponto.getNomeTipo());
         p.setDataHora(ponto.getDataHora());
         pontoRepository.save(p);
-        return ResponseEntity.ok().body("Record updated successfully.");
+        return ResponseEntity.ok().body("Registro atualizado com êxito.");
     }
-
+    
     @DeleteMapping("/ponto/{id}")
     public ResponseEntity<?> deletePonto(@PathVariable UUID id) {
         Optional<Ponto> existing = pontoRepository.findById(id);
@@ -178,17 +190,17 @@ public class FuncionarioController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         pontoRepository.delete(existing.get());
-        return ResponseEntity.ok().body("Record deleted successfully.");
+        return ResponseEntity.ok().body("Registro deletado com êxito.");
     }
-
+    
     // --- RESET DE SENHA E LINK ---
     @PostMapping("/storeResetCode")
     public ResponseEntity<?> storeResetCode(@RequestBody Link link) {
         link.setDataCriacao(Instant.now());
         linkRepository.save(link);
-        return ResponseEntity.ok().body("Link created successfully.");
+        return ResponseEntity.ok().body("Registro criado com êxito.");
     }
-
+    
     @PostMapping("/checkEmailExists")
     public ResponseEntity<?> checkEmailExists(@RequestBody EmailRequest emailRequest) {
         Optional<Funcionario> funcionario = funcionarioRepository.findByEmail(emailRequest.getEmail());
@@ -198,13 +210,13 @@ public class FuncionarioController {
         }
         return ResponseEntity.ok().body(null);
     }
-
+    
     @PostMapping("/verifyResetCode")
     public ResponseEntity<?> verifyResetCode(@RequestBody CodeRequest codeRequest) {
         Optional<Link> link = linkRepository.findByCodigo(codeRequest.getCodigo());
         return ResponseEntity.ok().body(link.isPresent() ? new ValidResponse(true) : new ValidResponse(false));
     }
-
+    
     @PutMapping("/resetPassword")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest req) {
         Optional<Link> linkOpt = linkRepository.findByCodigo(req.getCodigo());
@@ -221,7 +233,7 @@ public class FuncionarioController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Código inválido.");
     }
-
+    
     @PutMapping("/newPassword")
     public ResponseEntity<?> newPassword(@RequestBody NewPasswordRequest req) {
         Optional<Funcionario> funcionarioOpt = funcionarioRepository.findById(req.getN_registro());
@@ -234,7 +246,7 @@ public class FuncionarioController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao alterar a senha.");
     }
-
+    
     // --- DTOs ---
     public static class LoginRequest {
         private String email;
@@ -244,6 +256,7 @@ public class FuncionarioController {
         public String getSenha() { return senha; }
         public void setSenha(String senha) { this.senha = senha; }
     }
+    
     public static class LoginResponse {
         private int status;
         private String message;
@@ -255,21 +268,25 @@ public class FuncionarioController {
         public String getMessage() { return message; }
         public FuncionarioDTO getFuncionario() { return funcionario; }
     }
+
     public static class EmailRequest {
         private String email;
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
     }
+
     public static class CodeRequest {
         private String codigo;
         public String getCodigo() { return codigo; }
         public void setCodigo(String codigo) { this.codigo = codigo; }
     }
+
     public static class ValidResponse {
         private boolean valid;
         public ValidResponse(boolean valid) { this.valid = valid; }
         public boolean isValid() { return valid; }
     }
+
     public static class ResetPasswordRequest {
         private String codigo;
         private String senha;
@@ -278,6 +295,7 @@ public class FuncionarioController {
         public String getSenha() { return senha; }
         public void setSenha(String senha) { this.senha = senha; }
     }
+
     public static class NewPasswordRequest {
         private Integer n_registro;
         private String senha;
@@ -286,6 +304,7 @@ public class FuncionarioController {
         public String getSenha() { return senha; }
         public void setSenha(String senha) { this.senha = senha; }
     }
+
     public static class FuncionarioBasicDTO {
         private Integer n_registro;
         private String nome;
@@ -294,5 +313,20 @@ public class FuncionarioController {
         }
         public Integer getN_registro() { return n_registro; }
         public String getNome() { return nome; }
+    }
+
+    public static class PontoRequest {
+        private String id_ponto;
+        private String funcionario_fk;
+        private String nome_tipo;
+        private String data_hora;
+        public String getId_ponto() { return id_ponto; }
+        public void setId_ponto(String id_ponto) { this.id_ponto = id_ponto; }
+        public String getFuncionario_fk() { return funcionario_fk; }
+        public void setFuncionario_fk(String funcionario_fk) { this.funcionario_fk = funcionario_fk; }
+        public String getNome_tipo() { return nome_tipo; }
+        public void setNome_tipo(String nome_tipo) { this.nome_tipo = nome_tipo; }
+        public String getData_hora() { return data_hora; }
+        public void setData_hora(String data_hora) { this.data_hora = data_hora; }
     }
 }
