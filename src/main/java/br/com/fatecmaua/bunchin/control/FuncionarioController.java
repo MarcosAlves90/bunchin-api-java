@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fatecmaua.bunchin.dto.FuncionarioDTO;
+import br.com.fatecmaua.bunchin.dto.PontoDTO;
 import br.com.fatecmaua.bunchin.model.Funcionario;
 import br.com.fatecmaua.bunchin.model.Link;
 import br.com.fatecmaua.bunchin.model.Ponto;
@@ -139,47 +140,66 @@ public class FuncionarioController {
 
     // --- PONTO CRUD ---
     @GetMapping("/ponto")
-    public List<Ponto> getAllPontos() {
-        return pontoRepository.findAll();
+    public List<PontoDTO> getAllPontos() {
+        return pontoRepository.findAll().stream()
+                .map(PontoDTO::fromPonto)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @GetMapping("/ponto/{id}")
-    public Ponto getPontoById(@PathVariable UUID id) {
-        return pontoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public PontoDTO getPontoById(@PathVariable UUID id) {
+        Ponto ponto = pontoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return PontoDTO.fromPonto(ponto);
     }
 
     @PostMapping("/ponto")
-    public ResponseEntity<?> createPonto(@RequestBody PontoRequest pontoRequest) {
-        Ponto ponto = new Ponto();
-        if (pontoRequest.getId_ponto() != null) {
-            ponto.setId_ponto(UUID.fromString(pontoRequest.getId_ponto()));
-        } else {
-            ponto.setId_ponto(UUID.randomUUID());
+    public ResponseEntity<?> createPonto(@RequestBody PontoDTO pontoDTO) {
+        if (pontoDTO.getFuncionario_fk() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "funcionario_fk (CPF) é obrigatório");
         }
-        ponto.setNome_tipo(pontoRequest.getNome_tipo());
-        ponto.setData_hora(Instant.parse(pontoRequest.getData_hora()));
-        if (pontoRequest.getFuncionario_fk() != null) {
-            String cpf = pontoRequest.getFuncionario_fk();
-            funcionarioRepository.findByCpf(cpf).ifPresentOrElse(
-                ponto::setFuncionario_fk,
-                () -> { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "funcionario_fk (CPF) inválido"); }
-            );
-        }
+        
+        // Buscar funcionário pelo CPF
+        Funcionario funcionario = funcionarioRepository.findByCpf(pontoDTO.getFuncionario_fk())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                        "funcionario_fk (CPF) inválido: " + pontoDTO.getFuncionario_fk()));
+        
+        // Converter DTO para entidade
+        Ponto ponto = pontoDTO.toPonto(funcionario);
+        
+        // Salvar
         pontoRepository.save(ponto);
         return ResponseEntity.ok().body("Registro criado com êxito.");
     }
 
     @PutMapping("/ponto/{id}")
-    public ResponseEntity<?> updatePonto(@PathVariable UUID id, @RequestBody Ponto ponto) {
-        Optional<Ponto> existing = pontoRepository.findById(id);
-        if (existing.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> updatePonto(@PathVariable UUID id, @RequestBody PontoDTO pontoDTO) {
+        // Buscar o ponto existente
+        Ponto ponto = pontoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ponto não encontrado"));
+        
+        // Atualizar os campos simples
+        ponto.setNome_tipo(pontoDTO.getNome_tipo());
+        
+        // Atualizar a data se informada
+        if (pontoDTO.getData_hora() != null) {
+            try {
+                ponto.setData_hora(Instant.parse(pontoDTO.getData_hora()));
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato de data inválido");
+            }
         }
-        Ponto p = existing.get();
-        p.setFuncionario_fk(ponto.getFuncionario_fk());
-        p.setNome_tipo(ponto.getNome_tipo());
-        p.setData_hora(ponto.getData_hora());
-        pontoRepository.save(p);
+        
+        // Atualizar o funcionário se informado
+        if (pontoDTO.getFuncionario_fk() != null) {
+            Funcionario funcionario = funcionarioRepository.findByCpf(pontoDTO.getFuncionario_fk())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                            "funcionario_fk (CPF) inválido: " + pontoDTO.getFuncionario_fk()));
+            ponto.setFuncionario_fk(funcionario);
+        }
+        
+        // Salvar as alterações
+        pontoRepository.save(ponto);
         return ResponseEntity.ok().body("Registro atualizado com êxito.");
     }
     
@@ -315,18 +335,5 @@ public class FuncionarioController {
         public String getNome() { return nome; }
     }
 
-    public static class PontoRequest {
-        private String id_ponto;
-        private String funcionario_fk;
-        private String nome_tipo;
-        private String data_hora;
-        public String getId_ponto() { return id_ponto; }
-        public void setId_ponto(String id_ponto) { this.id_ponto = id_ponto; }
-        public String getFuncionario_fk() { return funcionario_fk; }
-        public void setFuncionario_fk(String funcionario_fk) { this.funcionario_fk = funcionario_fk; }
-        public String getNome_tipo() { return nome_tipo; }
-        public void setNome_tipo(String nome_tipo) { this.nome_tipo = nome_tipo; }
-        public String getData_hora() { return data_hora; }
-        public void setData_hora(String data_hora) { this.data_hora = data_hora; }
-    }
+    // A classe PontoRequest foi removida e substituída por PontoDTO
 }
