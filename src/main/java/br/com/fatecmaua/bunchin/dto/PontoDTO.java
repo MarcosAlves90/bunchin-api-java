@@ -8,7 +8,7 @@ import br.com.fatecmaua.bunchin.model.Funcionario;
 
 public class PontoDTO {
     private String id_ponto;
-    private String funcionario_fk; // Será o CPF do funcionário
+    private String funcionario_fk;
     private String nome_tipo;
     private String data_hora;
     

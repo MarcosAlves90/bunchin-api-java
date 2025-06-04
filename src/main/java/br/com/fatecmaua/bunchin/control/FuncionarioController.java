@@ -30,6 +30,7 @@ import br.com.fatecmaua.bunchin.repository.FuncionarioRepository;
 import br.com.fatecmaua.bunchin.repository.LinkRepository;
 import br.com.fatecmaua.bunchin.repository.PontoRepository;
 import br.com.fatecmaua.bunchin.service.FuncionarioCachingService;
+import br.com.fatecmaua.bunchin.service.PontoCachingService;
 
 @RestController
 @RequestMapping("/api")
@@ -42,6 +43,8 @@ public class FuncionarioController {
     private LinkRepository linkRepository;
     @Autowired
     private FuncionarioCachingService funcionarioCachingService;
+    @Autowired
+    private PontoCachingService pontoCachingService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     
@@ -141,7 +144,7 @@ public class FuncionarioController {
     // --- PONTO CRUD ---
     @GetMapping("/ponto")
     public List<PontoDTO> getAllPontos() {
-        return pontoRepository.findAll().stream()
+        return pontoCachingService.findAll().stream()
                 .map(PontoDTO::fromPonto)
                 .collect(java.util.stream.Collectors.toList());
     }
@@ -159,16 +162,14 @@ public class FuncionarioController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "funcionario_fk (CPF) é obrigatório");
         }
         
-        // Buscar funcionário pelo CPF
         Funcionario funcionario = funcionarioRepository.findByCpf(pontoDTO.getFuncionario_fk())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
                         "funcionario_fk (CPF) inválido: " + pontoDTO.getFuncionario_fk()));
         
-        // Converter DTO para entidade
         Ponto ponto = pontoDTO.toPonto(funcionario);
         
-        // Salvar
         pontoRepository.save(ponto);
+        pontoCachingService.removerCache();
         return ResponseEntity.ok().body("Registro criado com êxito.");
     }
 
@@ -200,6 +201,7 @@ public class FuncionarioController {
         
         // Salvar as alterações
         pontoRepository.save(ponto);
+        pontoCachingService.removerCache();
         return ResponseEntity.ok().body("Registro atualizado com êxito.");
     }
     
@@ -210,6 +212,7 @@ public class FuncionarioController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         pontoRepository.delete(existing.get());
+        pontoCachingService.removerCache();
         return ResponseEntity.ok().body("Registro deletado com êxito.");
     }
     
