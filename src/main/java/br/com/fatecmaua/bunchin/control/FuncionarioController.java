@@ -157,6 +157,8 @@ public class FuncionarioController {
     }
 
 
+// ...existing code...
+
 @GetMapping("/ponto/filtro")
 public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("cpf") String cpf, @RequestParam("dia") String dia) {
     
@@ -167,7 +169,10 @@ public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("cpf") String 
     try {
         Instant dataRecebida = Instant.parse(dia);
         
-        Instant dataInicio = dataRecebida.truncatedTo(java.time.temporal.ChronoUnit.DAYS);
+        java.time.ZoneId zoneId = java.time.ZoneId.of("UTC");
+        java.time.ZonedDateTime zonedDateTime = dataRecebida.atZone(zoneId);
+        
+        Instant dataInicio = zonedDateTime.truncatedTo(java.time.temporal.ChronoUnit.DAYS).toInstant();
         Instant dataFim = dataInicio.plus(1, java.time.temporal.ChronoUnit.DAYS).minusNanos(1);
         
         List<Ponto> pontos = pontoRepository.findByFuncionario_fkAndData_horaBetween(
@@ -178,7 +183,8 @@ public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("cpf") String 
                 .collect(java.util.stream.Collectors.toList());
                 
     } catch (Exception e) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato de data inválido: " + dia);
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                "Formato de timestamp inválido: " + dia + ". Erro: " + e.getMessage());
     }
 }
 
