@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PontoRepository extends JpaRepository<Ponto, java.util.UUID> {
+    List<Ponto> findByFuncionario_fkAndData_horaBetween(Funcionario funcionario, Instant dataInicio, Instant dataFim);
 }

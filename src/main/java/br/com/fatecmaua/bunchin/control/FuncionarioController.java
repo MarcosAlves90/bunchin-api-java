@@ -156,6 +156,32 @@ public class FuncionarioController {
         return PontoDTO.fromPonto(ponto);
     }
 
+
+@GetMapping("/ponto/filtro")
+public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("cpf") String cpf, @RequestParam("dia") String dia) {
+    
+    Funcionario funcionario = funcionarioRepository.findByCpf(cpf)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
+                    "Funcionário não encontrado com CPF: " + cpf));
+    
+    try {
+        Instant dataRecebida = Instant.parse(dia);
+        
+        Instant dataInicio = dataRecebida.truncatedTo(java.time.temporal.ChronoUnit.DAYS);
+        Instant dataFim = dataInicio.plus(1, java.time.temporal.ChronoUnit.DAYS).minusNanos(1);
+        
+        List<Ponto> pontos = pontoRepository.findByFuncionario_fkAndData_horaBetween(
+                funcionario, dataInicio, dataFim);
+        
+        return pontos.stream()
+                .map(PontoDTO::fromPonto)
+                .collect(java.util.stream.Collectors.toList());
+                
+    } catch (Exception e) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato de data inválido: " + dia);
+    }
+}
+
     @PostMapping("/ponto")
     public ResponseEntity<?> createPonto(@RequestBody PontoDTO pontoDTO) {
         if (pontoDTO.getFuncionario_fk() == null) {
