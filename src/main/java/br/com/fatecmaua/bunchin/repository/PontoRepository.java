@@ -3,11 +3,14 @@ package br.com.fatecmaua.bunchin.repository;
 import br.com.fatecmaua.bunchin.model.Ponto;
 import br.com.fatecmaua.bunchin.model.Funcionario;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.time.Instant;
 
 @Repository
 public interface PontoRepository extends JpaRepository<Ponto, java.util.UUID> {
-    List<Ponto> findByFuncionario_fkAndData_horaBetween(Funcionario funcionario, Instant dataInicio, Instant dataFim);
+    @Query("SELECT p FROM Ponto p WHERE p.funcionario_fk = :funcionario AND p.data_hora BETWEEN :dataInicio AND :dataFim")
+    List<Ponto> findByFuncionario_fkAndData_horaBetween(@Param("funcionario") Funcionario funcionario, @Param("dataInicio") Instant dataInicio, @Param("dataFim") Instant dataFim);
 }
