@@ -1,6 +1,8 @@
 package br.com.fatecmaua.bunchin.control;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -167,8 +169,11 @@ public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("cpf") String 
     try {
         Instant dataRecebida = Instant.parse(dia);
         
-        Instant dataInicio = dataRecebida.truncatedTo(java.time.temporal.ChronoUnit.DAYS);
-        Instant dataFim = dataInicio.plus(1, java.time.temporal.ChronoUnit.DAYS).minusNanos(1);
+        ZoneId fusoHorarioBrasil = ZoneId.of("America/Sao_Paulo");
+        LocalDate dataLocal = dataRecebida.atZone(fusoHorarioBrasil).toLocalDate();
+        
+        Instant dataInicio = dataLocal.atStartOfDay(fusoHorarioBrasil).toInstant();
+        Instant dataFim = dataLocal.plusDays(1).atStartOfDay(fusoHorarioBrasil).toInstant().minusNanos(1);
         
         List<Ponto> pontos = pontoRepository.findByFuncionario_fkAndData_horaBetween(
                 funcionario, dataInicio, dataFim);
