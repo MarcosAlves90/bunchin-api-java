@@ -183,8 +183,7 @@ public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("cpf") String 
                 .collect(java.util.stream.Collectors.toList());
                 
     } catch (Exception e) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
-                "Formato de timestamp inválido: " + dia + ". Erro: " + e.getMessage());
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato de data inválido: " + dia, e);
     }
 }
 
