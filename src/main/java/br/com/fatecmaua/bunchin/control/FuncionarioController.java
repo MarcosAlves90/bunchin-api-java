@@ -61,7 +61,7 @@ public class FuncionarioController {
 	    dto.setCpf(funcionario.getCpf());
 	    dto.setStatus(funcionario.getStatus());
         if (funcionario.getOrganizacao() != null) {
-            dto.setOrganizacao_id(funcionario.getOrganizacao().getId());
+            dto.setOrganizacao_id(funcionario.getOrganizacao().getIdOrganizacao());
         }
 	    return dto;
     }
