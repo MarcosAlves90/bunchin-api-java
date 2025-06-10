@@ -9,6 +9,7 @@ public class FuncionarioDTO {
 	private String departamento;
 	private String cpf;
 	private String status;
+	private Integer organizacao_id;
 	
 	public Integer getN_registro() {
 		return n_registro;
@@ -57,5 +58,11 @@ public class FuncionarioDTO {
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	public Integer getOrganizacao_id() {
+		return organizacao_id;
+	}
+	public void setOrganizacao_id(Integer organizacao_id) {
+		this.organizacao_id = organizacao_id;
 	}
 }

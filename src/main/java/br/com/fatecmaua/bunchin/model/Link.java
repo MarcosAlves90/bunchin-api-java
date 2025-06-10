@@ -16,8 +16,8 @@ public class Link {
     @Column(nullable = false, length = 255)
     private String codigo;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "funcionario_id", referencedColumnName = "n_registro", nullable = true)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "funcionario_id", referencedColumnName = "n_registro", nullable = false)
     private Funcionario funcionario;
 
     @Column(name = "data_criacao", nullable = false)

@@ -11,6 +11,6 @@ import java.time.Instant;
 
 @Repository
 public interface PontoRepository extends JpaRepository<Ponto, java.util.UUID> {
-    @Query("SELECT p FROM Ponto p WHERE p.funcionario_fk = :funcionario AND p.data_hora BETWEEN :dataInicio AND :dataFim")
-    List<Ponto> findByFuncionario_fkAndData_horaBetween(@Param("funcionario") Funcionario funcionario, @Param("dataInicio") Instant dataInicio, @Param("dataFim") Instant dataFim);
+    @Query("SELECT p FROM Ponto p WHERE p.funcionario = :funcionario AND p.data_hora BETWEEN :dataInicio AND :dataFim")
+    List<Ponto> findByFuncionarioAndData_horaBetween(@Param("funcionario") Funcionario funcionario, @Param("dataInicio") Instant dataInicio, @Param("dataFim") Instant dataFim);
 }

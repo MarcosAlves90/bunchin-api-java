@@ -11,6 +11,7 @@ public class PontoDTO {
     private String funcionario_fk;
     private String nome_tipo;
     private String data_hora;
+    private Integer projeto_id;
     
     // Construtores
     public PontoDTO() {}
@@ -20,6 +21,7 @@ public class PontoDTO {
         this.funcionario_fk = funcionario_fk;
         this.nome_tipo = nome_tipo;
         this.data_hora = data_hora;
+        this.projeto_id = null;
     }
     
     // Getters e Setters
@@ -55,6 +57,14 @@ public class PontoDTO {
         this.data_hora = data_hora;
     }
     
+    public Integer getProjeto_id() {
+        return projeto_id;
+    }
+    
+    public void setProjeto_id(Integer projeto_id) {
+        this.projeto_id = projeto_id;
+    }
+    
     // Método para converter de Ponto para PontoDTO
     public static PontoDTO fromPonto(Ponto ponto) {
         PontoDTO dto = new PontoDTO();
@@ -63,8 +73,13 @@ public class PontoDTO {
         dto.setData_hora(ponto.getData_hora() != null ? ponto.getData_hora().toString() : null);
         
         // Pega apenas o CPF do funcionário
-        if (ponto.getFuncionario_fk() != null) {
-            dto.setFuncionario_fk(ponto.getFuncionario_fk().getCpf());
+        if (ponto.getFuncionario() != null) {
+            dto.setFuncionario_fk(ponto.getFuncionario().getCpf());
+        }
+        
+        // Pega o ID do projeto se existir
+        if (ponto.getProjeto() != null) {
+            dto.setProjeto_id(ponto.getProjeto().getIdProjeto());
         }
         
         return dto;
@@ -72,6 +87,11 @@ public class PontoDTO {
     
     // Método para converter de PontoDTO para Ponto
     public Ponto toPonto(Funcionario funcionario) {
+        return toPonto(funcionario, null);
+    }
+    
+    // Método para converter de PontoDTO para Ponto com projeto
+    public Ponto toPonto(Funcionario funcionario, br.com.fatecmaua.bunchin.model.Projeto projeto) {
         Ponto ponto = new Ponto();
         if (id_ponto != null && !id_ponto.isEmpty()) {
             ponto.setId_ponto(UUID.fromString(id_ponto));
@@ -82,7 +102,8 @@ public class PontoDTO {
         if (data_hora != null) {
             ponto.setData_hora(Instant.parse(data_hora));
         }
-        ponto.setFuncionario_fk(funcionario);
+        ponto.setFuncionario(funcionario);
+        ponto.setProjeto(projeto);
         
         return ponto;
     }

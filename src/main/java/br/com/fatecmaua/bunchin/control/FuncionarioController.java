@@ -60,6 +60,7 @@ public class FuncionarioController {
 	    dto.setDepartamento(funcionario.getDepartamento());
 	    dto.setCpf(funcionario.getCpf());
 	    dto.setStatus(funcionario.getStatus());
+        dto.setOrganizacao_id(funcionario.getOrganizacao());
 	    return dto;
     }
 
@@ -175,7 +176,7 @@ public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("cpf") String 
         Instant dataInicio = dataLocal.atStartOfDay(fusoHorarioBrasil).toInstant();
         Instant dataFim = dataLocal.plusDays(1).atStartOfDay(fusoHorarioBrasil).toInstant().minusNanos(1);
         
-        List<Ponto> pontos = pontoRepository.findByFuncionario_fkAndData_horaBetween(
+        List<Ponto> pontos = pontoRepository.findByFuncionarioAndData_horaBetween(
                 funcionario, dataInicio, dataFim);
         
         return pontos.stream()
@@ -227,7 +228,7 @@ public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("cpf") String 
             Funcionario funcionario = funcionarioRepository.findByCpf(pontoDTO.getFuncionario_fk())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
                             "funcionario_fk (CPF) inválido: " + pontoDTO.getFuncionario_fk()));
-            ponto.setFuncionario_fk(funcionario);
+            ponto.setFuncionario(funcionario);
         }
         
         // Salvar as alterações

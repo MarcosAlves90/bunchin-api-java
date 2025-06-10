@@ -1,10 +1,6 @@
 package br.com.fatecmaua.bunchin.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tb_funcionario")
@@ -21,10 +17,14 @@ public class Funcionario {
     private String departamento;
     private String status;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "organizacao_id", referencedColumnName = "id_organizacao", nullable = false)
+    private Organizacao organizacao;
+
     public Funcionario() {
     }
 
-    public Funcionario(Integer n_registro, String nome, String email, String senha, String cpf, String funcao, String cargo, String departamento, String status) {
+    public Funcionario(Integer n_registro, String nome, String email, String senha, String cpf, String funcao, String cargo, String departamento, String status, Organizacao organizacao) {
         this.n_registro = n_registro;
         this.nome = nome;
         this.email = email;
@@ -34,6 +34,7 @@ public class Funcionario {
         this.cargo = cargo;
         this.departamento = departamento;
         this.status = status;
+        this.organizacao = organizacao;
     }
 
     public Integer getN_registro() {
@@ -106,5 +107,13 @@ public class Funcionario {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Organizacao getOrganizacao() {
+        return organizacao;
+    }
+
+    public void setOrganizacao(Organizacao organizacao) {
+        this.organizacao = organizacao;
     }
 }

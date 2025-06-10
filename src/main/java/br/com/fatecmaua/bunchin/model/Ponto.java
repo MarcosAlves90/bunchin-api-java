@@ -13,9 +13,9 @@ public class Ponto {
     @Column(name = "id_ponto", columnDefinition = "uuid")
     private UUID id_ponto;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "funcionario_fk", referencedColumnName = "cpf", nullable = true)
-    private Funcionario funcionario_fk;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "funcionario_id", referencedColumnName = "n_registro", nullable = false)
+    private Funcionario funcionario;
 
     @Column(name = "nome_tipo", length = 20, nullable = false)
     private String nome_tipo;
@@ -24,13 +24,18 @@ public class Ponto {
     @Convert(converter = InstantStringAttributeConverter.class)
     private Instant data_hora;
 
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "projeto_id", referencedColumnName = "id_projeto", nullable = true)
+    private Projeto projeto;
+
     public Ponto() {}
 
-    public Ponto(UUID id_ponto, Funcionario funcionario_fk, String nome_tipo, Instant data_hora) {
+    public Ponto(UUID id_ponto, Funcionario funcionario, String nome_tipo, Instant data_hora, Projeto projeto) {
         this.id_ponto = id_ponto;
-        this.funcionario_fk = funcionario_fk;
+        this.funcionario = funcionario;
         this.nome_tipo = nome_tipo;
         this.data_hora = data_hora;
+        this.projeto = projeto;
     }
 
     public UUID getId_ponto() {
@@ -41,12 +46,20 @@ public class Ponto {
         this.id_ponto = id_ponto;
     }
 
-    public Funcionario getFuncionario_fk() {
-        return funcionario_fk;
+    public Funcionario getFuncionario() {
+        return funcionario;
     }
 
-    public void setFuncionario_fk(Funcionario funcionario_fk) {
-        this.funcionario_fk = funcionario_fk;
+    public void setFuncionario(Funcionario funcionario) {
+        this.funcionario = funcionario;
+    }
+
+    public Projeto getProjeto() {
+        return projeto;
+    }
+
+    public void setProjeto(Projeto projeto) {
+        this.projeto = projeto;
     }
 
     public String getNome_tipo() {
