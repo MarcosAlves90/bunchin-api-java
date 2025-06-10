@@ -161,44 +161,43 @@ public class FuncionarioController {
         return PontoDTO.fromPonto(ponto);
     }
 
-
-@GetMapping("/ponto/filtro")
-public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("cpf") String cpf, @RequestParam("dia") String dia) {
-    
-    Funcionario funcionario = funcionarioRepository.findByCpf(cpf)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
-                    "Funcionário não encontrado com CPF: " + cpf));
-    
-    try {
-        Instant dataRecebida = Instant.parse(dia);
+    @GetMapping("/ponto/filtro")
+    public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("funcionario_id") Integer funcionarioId, @RequestParam("dia") String dia) {
         
-        ZoneId fusoHorarioBrasil = ZoneId.of("America/Sao_Paulo");
-        LocalDate dataLocal = dataRecebida.atZone(fusoHorarioBrasil).toLocalDate();
+        Funcionario funcionario = funcionarioRepository.findByNRegistro(funcionarioId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
+                        "Funcionário não encontrado com ID: " + funcionarioId));
         
-        Instant dataInicio = dataLocal.atStartOfDay(fusoHorarioBrasil).toInstant();
-        Instant dataFim = dataLocal.plusDays(1).atStartOfDay(fusoHorarioBrasil).toInstant().minusNanos(1);
-        
-        List<Ponto> pontos = pontoRepository.findByFuncionarioAndData_horaBetween(
-                funcionario, dataInicio, dataFim);
-        
-        return pontos.stream()
-                .map(PontoDTO::fromPonto)
-                .collect(java.util.stream.Collectors.toList());
-                
-    } catch (Exception e) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato de data inválido: " + dia);
+        try {
+            Instant dataRecebida = Instant.parse(dia);
+            
+            ZoneId fusoHorarioBrasil = ZoneId.of("America/Sao_Paulo");
+            LocalDate dataLocal = dataRecebida.atZone(fusoHorarioBrasil).toLocalDate();
+            
+            Instant dataInicio = dataLocal.atStartOfDay(fusoHorarioBrasil).toInstant();
+            Instant dataFim = dataLocal.plusDays(1).atStartOfDay(fusoHorarioBrasil).toInstant().minusNanos(1);
+            
+            List<Ponto> pontos = pontoRepository.findByFuncionarioAndData_horaBetween(
+                    funcionario, dataInicio, dataFim);
+            
+            return pontos.stream()
+                    .map(PontoDTO::fromPonto)
+                    .collect(java.util.stream.Collectors.toList());
+                    
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato de data inválido: " + dia);
+        }
     }
-}
 
     @PostMapping("/ponto")
     public ResponseEntity<?> createPonto(@RequestBody PontoDTO pontoDTO) {
         if (pontoDTO.getFuncionario_fk() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "funcionario_fk (CPF) é obrigatório");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "funcionario_fk (n_registro) é obrigatório");
         }
         
-        Funcionario funcionario = funcionarioRepository.findByCpf(pontoDTO.getFuncionario_fk())
+        Funcionario funcionario = funcionarioRepository.findByNRegistro(pontoDTO.getFuncionario_fk())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
-                        "funcionario_fk (CPF) inválido: " + pontoDTO.getFuncionario_fk()));
+                        "funcionario_fk (n_registro) inválido: " + pontoDTO.getFuncionario_fk()));
         
         Ponto ponto = pontoDTO.toPonto(funcionario);
         
@@ -227,9 +226,9 @@ public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("cpf") String 
         
         // Atualizar o funcionário se informado
         if (pontoDTO.getFuncionario_fk() != null) {
-            Funcionario funcionario = funcionarioRepository.findByCpf(pontoDTO.getFuncionario_fk())
+            Funcionario funcionario = funcionarioRepository.findByNRegistro(pontoDTO.getFuncionario_fk())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
-                            "funcionario_fk (CPF) inválido: " + pontoDTO.getFuncionario_fk()));
+                            "funcionario_fk (n_registro) inválido: " + pontoDTO.getFuncionario_fk()));
             ponto.setFuncionario(funcionario);
         }
         

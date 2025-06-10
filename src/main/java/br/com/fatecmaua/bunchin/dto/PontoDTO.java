@@ -8,7 +8,7 @@ import br.com.fatecmaua.bunchin.model.Funcionario;
 
 public class PontoDTO {
     private String id_ponto;
-    private String funcionario_fk;
+    private Integer funcionario_fk;
     private String nome_tipo;
     private String data_hora;
     private Integer projeto_id;
@@ -16,7 +16,7 @@ public class PontoDTO {
     // Construtores
     public PontoDTO() {}
     
-    public PontoDTO(String id_ponto, String funcionario_fk, String nome_tipo, String data_hora) {
+    public PontoDTO(String id_ponto, Integer funcionario_fk, String nome_tipo, String data_hora) {
         this.id_ponto = id_ponto;
         this.funcionario_fk = funcionario_fk;
         this.nome_tipo = nome_tipo;
@@ -33,11 +33,11 @@ public class PontoDTO {
         this.id_ponto = id_ponto;
     }
     
-    public String getFuncionario_fk() {
+    public Integer getFuncionario_fk() {
         return funcionario_fk;
     }
     
-    public void setFuncionario_fk(String funcionario_fk) {
+    public void setFuncionario_fk(Integer funcionario_fk) {
         this.funcionario_fk = funcionario_fk;
     }
     
@@ -72,9 +72,9 @@ public class PontoDTO {
         dto.setNome_tipo(ponto.getNome_tipo());
         dto.setData_hora(ponto.getData_hora() != null ? ponto.getData_hora().toString() : null);
         
-        // Pega apenas o CPF do funcionário
+        // Pega o n_registro do funcionário
         if (ponto.getFuncionario() != null) {
-            dto.setFuncionario_fk(ponto.getFuncionario().getCpf());
+            dto.setFuncionario_fk(ponto.getFuncionario().getN_registro());
         }
         
         // Pega o ID do projeto se existir
