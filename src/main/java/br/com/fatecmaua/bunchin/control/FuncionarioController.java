@@ -100,9 +100,9 @@ public class FuncionarioController {
         return ResponseEntity.ok().body("Funcionário criado com sucesso.");
     }
 
-    @PutMapping("/funcionario/{cpf}")
-    public ResponseEntity<?> updateFuncionario(@PathVariable String cpf, @RequestBody Funcionario funcionario) {
-        Optional<Funcionario> existing = funcionarioRepository.findByCpf(cpf);
+    @PutMapping("/funcionario/{n_registro}")
+    public ResponseEntity<?> updateFuncionario(@PathVariable String n_registro, @RequestBody Funcionario funcionario) {
+        Optional<Funcionario> existing = funcionarioRepository.findByNRegistro(Integer.parseInt(n_registro));
         if (existing.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -121,9 +121,9 @@ public class FuncionarioController {
         return ResponseEntity.ok().body("Funcionário atualizado com sucesso.");
     }
 
-    @DeleteMapping("/funcionario/{cpf}")
-    public ResponseEntity<?> deleteFuncionario(@PathVariable String cpf) {
-        Optional<Funcionario> existing = funcionarioRepository.findByCpf(cpf);
+    @DeleteMapping("/funcionario/{n_registro}")
+    public ResponseEntity<?> deleteFuncionario(@PathVariable String n_registro) {
+        Optional<Funcionario> existing = funcionarioRepository.findByNRegistro(Integer.parseInt(n_registro));
         if (existing.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
