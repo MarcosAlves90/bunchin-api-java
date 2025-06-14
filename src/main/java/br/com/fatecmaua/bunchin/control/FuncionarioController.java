@@ -164,7 +164,7 @@ public class FuncionarioController {
     @GetMapping("/ponto/filtro")
     public List<PontoDTO> getPontosByFuncionarioAndData(@RequestParam("funcionario_id") Integer funcionarioId, @RequestParam("dia") String dia) {
         
-        Funcionario funcionario = funcionarioRepository.findByN_registro(funcionarioId)
+        Funcionario funcionario = funcionarioRepository.findByNRegistro(funcionarioId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
                         "Funcionário não encontrado com ID: " + funcionarioId));
         
@@ -195,7 +195,7 @@ public class FuncionarioController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "funcionario_fk (n_registro) é obrigatório");
         }
         
-        Funcionario funcionario = funcionarioRepository.findByN_registro(pontoDTO.getFuncionario_fk())
+        Funcionario funcionario = funcionarioRepository.findByNRegistro(pontoDTO.getFuncionario_fk())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
                         "funcionario_fk (n_registro) inválido: " + pontoDTO.getFuncionario_fk()));
         
@@ -226,7 +226,7 @@ public class FuncionarioController {
         
         // Atualizar o funcionário se informado
         if (pontoDTO.getFuncionario_fk() != null) {
-            Funcionario funcionario = funcionarioRepository.findByN_registro(pontoDTO.getFuncionario_fk())
+            Funcionario funcionario = funcionarioRepository.findByNRegistro(pontoDTO.getFuncionario_fk())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
                             "funcionario_fk (n_registro) inválido: " + pontoDTO.getFuncionario_fk()));
             ponto.setFuncionario(funcionario);
