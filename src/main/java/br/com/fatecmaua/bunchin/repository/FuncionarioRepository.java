@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Integer> {
-    Optional<Funcionario> findByNRegistro(Integer nRegistro);    
+    Optional<Funcionario> findByN_registro(Integer n_registro);    
     Optional<Funcionario> findByCpf(String cpf);
     Optional<Funcionario> findByEmail(String email);
     Optional<Funcionario> findByEmailOrCpf(String email, String cpf);
