@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Integer> {
-    @Query("SELECT * FROM tb_funcionario fp WHERE n_registro = :n_registro")
+    @Query("SELECT * FROM tb_funcionario WHERE n_registro = :n_registro")
     List<Funcionario> findByNRegistro(@Param("n_registro") Integer n_registro);
     Optional<Funcionario> findByCpf(String cpf);
     Optional<Funcionario> findByEmail(String email);
