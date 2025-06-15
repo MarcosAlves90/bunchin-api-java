@@ -44,6 +44,8 @@ public class FuncionarioController {
     @Autowired
     private LinkRepository linkRepository;
     @Autowired
+    private OrganizacaoRepository organizacaoRepository;
+    @Autowired
     private FuncionarioCachingService funcionarioCachingService;
     @Autowired
     private PontoCachingService pontoCachingService;
@@ -93,7 +95,7 @@ public class FuncionarioController {
     @PostMapping("/funcionario")
     public ResponseEntity<?> createFuncionario(@RequestBody Funcionario funcionario) {
         funcionario.setStatus("0");
-        funcionario.setOrganizacao(organizacaoRepository.findById(funcionario.getOrganizacao_id()));
+        funcionario.setOrganizacao(organizacaoRepository.findById(funcionario.getOrganizacao().getIdOrganizacao()));
         funcionarioRepository.save(funcionario);
         funcionarioCachingService.removerCache();
         return ResponseEntity.ok().body("Funcionário criado com sucesso.");
