@@ -30,6 +30,7 @@ import br.com.fatecmaua.bunchin.model.Link;
 import br.com.fatecmaua.bunchin.model.Ponto;
 import br.com.fatecmaua.bunchin.repository.FuncionarioRepository;
 import br.com.fatecmaua.bunchin.repository.LinkRepository;
+import br.com.fatecmaua.bunchin.repository.OrganizacaoRepository;
 import br.com.fatecmaua.bunchin.repository.PontoRepository;
 import br.com.fatecmaua.bunchin.service.FuncionarioCachingService;
 import br.com.fatecmaua.bunchin.service.PontoCachingService;
