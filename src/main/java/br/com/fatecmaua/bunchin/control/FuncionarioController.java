@@ -93,7 +93,7 @@ public class FuncionarioController {
     @PostMapping("/funcionario")
     public ResponseEntity<?> createFuncionario(@RequestBody Funcionario funcionario) {
         funcionario.setStatus("0");
-        funcionario.organizacao_id = funcionario.getOrganizacao() != null ? funcionario.getOrganizacao().getIdOrganizacao() : null;
+        funcionario.setOrganizacao(organizacaoRepository.findById(funcionario.getOrganizacao_id()));
         funcionarioRepository.save(funcionario);
         funcionarioCachingService.removerCache();
         return ResponseEntity.ok().body("Funcionário criado com sucesso.");
