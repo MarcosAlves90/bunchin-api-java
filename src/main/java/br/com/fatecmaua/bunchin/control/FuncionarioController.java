@@ -92,8 +92,6 @@ public class FuncionarioController {
 
     @PostMapping("/funcionario")
     public ResponseEntity<?> createFuncionario(@RequestBody Funcionario funcionario) {
-    	String randomPassword = KeyGenerators.string().generateKey();
-        funcionario.setSenha(passwordEncoder.encode(randomPassword));
         funcionario.setStatus("0");
         funcionarioRepository.save(funcionario);
         funcionarioCachingService.removerCache();
