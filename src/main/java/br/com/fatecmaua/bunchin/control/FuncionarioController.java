@@ -231,26 +231,60 @@ public class FuncionarioController {
 
     // --- PROJETO CRUD ---
     @GetMapping("/funcionario/{funcionarioId}/organizacao/{organizacaoId}/projetos")
-    public List<ProjetoDTO> getProjetosByFuncionarioAndOrganizacao(
-            @PathVariable Integer funcionarioId,
-            @PathVariable Integer organizacaoId) {
+    public List<ProjetoDTO> getProjetosByFuncionarioAndOrganizacao(@PathVariable Integer funcionarioId, @PathVariable Integer organizacaoId) {
         
-        // Verificar se o funcionário existe
         Funcionario funcionario = funcionarioRepository.findById(funcionarioId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Funcionário não encontrado"));
         
-        // Verificar se a organização existe
         Organizacao organizacao = organizacaoRepository.findById(organizacaoId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Organização não encontrada"));
         
-        // Buscar projetos do funcionário na organização
         List<FuncionarioProjeto> funcionarioProjetos = funcionarioProjetoRepository
             .findByFuncionarioAndOrganizacao(funcionarioId, organizacaoId);
         
-        // Converter para DTOs
         return funcionarioProjetos.stream()
             .map(fp -> toProjetoDTO(fp.getProjeto()))
             .toList();
+    }
+
+    @PostMapping("/projeto")
+    public ResponseEntity<?> createProjeto(@RequestBody ProjetoDTO projetoDTO) {
+        try {
+            if (projetoDTO.getOrganizacaoId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("ID da organização é obrigatório");
+            }
+            
+            if (projetoDTO.getResponsavelId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("ID do responsável é obrigatório");
+            }
+            
+            Organizacao organizacao = organizacaoRepository.findById(projetoDTO.getOrganizacaoId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                    "Organização não encontrada"));
+            
+            Funcionario responsavel = funcionarioRepository.findByNRegistro(projetoDTO.getResponsavelId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                    "Funcionário responsável não encontrado"));
+            
+            Projeto projeto = new Projeto();
+            projeto.setNome(projetoDTO.getNome());
+            projeto.setDescricao(projetoDTO.getDescricao());
+            projeto.setOrganizacao(organizacao);
+            projeto.setResponsavel(responsavel);
+            projeto.setDataInicio(projetoDTO.getDataInicio());
+            projeto.setDataFimPrevista(projetoDTO.getDataFimPrevista());
+            projeto.setStatus(projetoDTO.getStatus() != null ? projetoDTO.getStatus() : "planejamento");
+            
+            projetoRepository.save(projeto);
+            
+            return ResponseEntity.ok().body("Projeto criado com sucesso.");
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erro ao criar projeto: " + e.getMessage());
+        }
     }
 
     // --- LOGIN ---
@@ -329,14 +363,11 @@ public class FuncionarioController {
 
     @PutMapping("/ponto/{id}")
     public ResponseEntity<?> updatePonto(@PathVariable UUID id, @RequestBody PontoDTO pontoDTO) {
-        // Buscar o ponto existente
         Ponto ponto = pontoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ponto não encontrado"));
         
-        // Atualizar os campos simples
         ponto.setNome_tipo(pontoDTO.getNome_tipo());
         
-        // Atualizar a data se informada
         if (pontoDTO.getData_hora() != null) {
             try {
                 ponto.setData_hora(Instant.parse(pontoDTO.getData_hora()));
@@ -345,7 +376,6 @@ public class FuncionarioController {
             }
         }
         
-        // Atualizar o funcionário se informado
         if (pontoDTO.getFuncionario_fk() != null) {
             Funcionario funcionario = funcionarioRepository.findByNRegistro(pontoDTO.getFuncionario_fk())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, 
@@ -353,7 +383,6 @@ public class FuncionarioController {
             ponto.setFuncionario(funcionario);
         }
         
-        // Salvar as alterações
         pontoRepository.save(ponto);
         pontoCachingService.removerCache();
         return ResponseEntity.ok().body("Registro atualizado com êxito.");
