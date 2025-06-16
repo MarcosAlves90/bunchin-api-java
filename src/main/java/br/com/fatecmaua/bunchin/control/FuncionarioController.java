@@ -211,9 +211,9 @@ public class FuncionarioController {
             admin.setNome(request.getAdminNome());
             admin.setEmail(request.getAdminEmail());
             admin.setCpf(request.getAdminCpf());
-            admin.setFuncao(request.getAdminFuncao() != null ? request.getAdminFuncao() : "Administrador");
-            admin.setCargo(request.getAdminCargo() != null ? request.getAdminCargo() : "Gerente");
-            admin.setDepartamento(request.getAdminDepartamento() != null ? request.getAdminDepartamento() : "Administrativo");
+            admin.setFuncao(request.getAdminFuncao() != null ? request.getAdminFuncao() : "administrador");
+            admin.setCargo(request.getAdminCargo() != null ? request.getAdminCargo() : "gerente");
+            admin.setDepartamento(request.getAdminDepartamento() != null ? request.getAdminDepartamento() : "administrativo");
             admin.setStatus("1");
             admin.setSenha(passwordEncoder.encode(request.getAdminSenha()));
             admin.setOrganizacao(organizacaoSalva);
