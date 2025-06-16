@@ -16,4 +16,7 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
     Optional<Funcionario> findByEmail(String email);
     Optional<Funcionario> findByEmailOrCpf(String email, String cpf);
     List<Funcionario> findByNomeContainingIgnoreCase(String substring);
+    
+    @Query("SELECT f FROM Funcionario f WHERE f.organizacao.idOrganizacao = :organizacaoId")
+    List<Funcionario> findByOrganizacaoId(@Param("organizacaoId") Integer organizacaoId);
 }

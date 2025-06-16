@@ -109,6 +109,14 @@ public class FuncionarioController {
             .toList();
     }
 
+    @GetMapping("/funcionario/organizacao/{organizacaoId}")
+    public List<FuncionarioDTO> getFuncionariosByOrganizacao(@PathVariable Integer organizacaoId) {
+        List<Funcionario> funcionarios = funcionarioRepository.findByOrganizacaoId(organizacaoId);
+        return funcionarios.stream()
+            .map(this::toDTO)
+            .toList();
+    }
+
     @PostMapping("/funcionario")
     public ResponseEntity<?> createFuncionario(@RequestBody Funcionario funcionario) {
         funcionario.setStatus("0");
