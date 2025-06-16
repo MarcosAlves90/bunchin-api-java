@@ -27,14 +27,19 @@ import br.com.fatecmaua.bunchin.dto.FuncionarioDTO;
 import br.com.fatecmaua.bunchin.dto.OrganizacaoDTO;
 import br.com.fatecmaua.bunchin.dto.OrganizacaoCreateDTO;
 import br.com.fatecmaua.bunchin.dto.PontoDTO;
+import br.com.fatecmaua.bunchin.dto.ProjetoDTO;
 import br.com.fatecmaua.bunchin.model.Funcionario;
+import br.com.fatecmaua.bunchin.model.FuncionarioProjeto;
 import br.com.fatecmaua.bunchin.model.Link;
 import br.com.fatecmaua.bunchin.model.Organizacao;
 import br.com.fatecmaua.bunchin.model.Ponto;
+import br.com.fatecmaua.bunchin.model.Projeto;
+import br.com.fatecmaua.bunchin.repository.FuncionarioProjetoRepository;
 import br.com.fatecmaua.bunchin.repository.FuncionarioRepository;
 import br.com.fatecmaua.bunchin.repository.LinkRepository;
 import br.com.fatecmaua.bunchin.repository.OrganizacaoRepository;
 import br.com.fatecmaua.bunchin.repository.PontoRepository;
+import br.com.fatecmaua.bunchin.repository.ProjetoRepository;
 import br.com.fatecmaua.bunchin.service.FuncionarioCachingService;
 import br.com.fatecmaua.bunchin.service.PontoCachingService;
 
@@ -43,6 +48,10 @@ import br.com.fatecmaua.bunchin.service.PontoCachingService;
 public class FuncionarioController {
     @Autowired
     private FuncionarioRepository funcionarioRepository;
+    @Autowired
+    private FuncionarioProjetoRepository funcionarioProjetoRepository;
+    @Autowired
+    private ProjetoRepository projetoRepository;
     @Autowired
     private PontoRepository pontoRepository;
     @Autowired
@@ -82,6 +91,30 @@ public class FuncionarioController {
         dto.setEmail(organizacao.getEmail());
         dto.setStatus(organizacao.getStatus());
         dto.setDataCriacao(organizacao.getDataCriacao());
+        return dto;
+    }
+
+    private ProjetoDTO toProjetoDTO(Projeto projeto) {
+        ProjetoDTO dto = new ProjetoDTO();
+        dto.setIdProjeto(projeto.getIdProjeto());
+        dto.setNome(projeto.getNome());
+        dto.setDescricao(projeto.getDescricao());
+        dto.setDataInicio(projeto.getDataInicio());
+        dto.setDataFimPrevista(projeto.getDataFimPrevista());
+        dto.setDataFimReal(projeto.getDataFimReal());
+        dto.setStatus(projeto.getStatus());
+        dto.setDataCriacao(projeto.getDataCriacao());
+        
+        if (projeto.getOrganizacao() != null) {
+            dto.setOrganizacaoId(projeto.getOrganizacao().getIdOrganizacao());
+            dto.setOrganizacaoNome(projeto.getOrganizacao().getNome());
+        }
+        
+        if (projeto.getResponsavel() != null) {
+            dto.setResponsavelId(projeto.getResponsavel().getN_registro());
+            dto.setResponsavelNome(projeto.getResponsavel().getNome());
+        }
+        
         return dto;
     }
 
@@ -194,6 +227,30 @@ public class FuncionarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro ao criar organização: " + e.getMessage());
         }
+    }
+
+    // --- PROJETO CRUD ---
+    @GetMapping("/funcionario/{funcionarioId}/organizacao/{organizacaoId}/projetos")
+    public List<ProjetoDTO> getProjetosByFuncionarioAndOrganizacao(
+            @PathVariable Integer funcionarioId,
+            @PathVariable Integer organizacaoId) {
+        
+        // Verificar se o funcionário existe
+        Funcionario funcionario = funcionarioRepository.findById(funcionarioId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Funcionário não encontrado"));
+        
+        // Verificar se a organização existe
+        Organizacao organizacao = organizacaoRepository.findById(organizacaoId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Organização não encontrada"));
+        
+        // Buscar projetos do funcionário na organização
+        List<FuncionarioProjeto> funcionarioProjetos = funcionarioProjetoRepository
+            .findByFuncionarioAndOrganizacao(funcionarioId, organizacaoId);
+        
+        // Converter para DTOs
+        return funcionarioProjetos.stream()
+            .map(fp -> toProjetoDTO(fp.getProjeto()))
+            .toList();
     }
 
     // --- LOGIN ---

@@ -13,4 +13,7 @@ public interface FuncionarioProjetoRepository extends JpaRepository<FuncionarioP
     List<FuncionarioProjeto> findByFuncionarioNRegistro(@Param("nRegistro") Integer nRegistro);
     List<FuncionarioProjeto> findByProjetoIdProjeto(Integer projetoId);
     List<FuncionarioProjeto> findByStatus(String status);
+    
+    @Query("SELECT fp FROM FuncionarioProjeto fp WHERE fp.funcionario.n_registro = :funcionarioId AND fp.projeto.organizacao.idOrganizacao = :organizacaoId AND fp.status = '1'")
+    List<FuncionarioProjeto> findByFuncionarioAndOrganizacao(@Param("funcionarioId") Integer funcionarioId, @Param("organizacaoId") Integer organizacaoId);
 }
