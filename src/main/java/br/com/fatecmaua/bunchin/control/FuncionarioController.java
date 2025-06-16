@@ -24,9 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fatecmaua.bunchin.dto.FuncionarioDTO;
+import br.com.fatecmaua.bunchin.dto.OrganizacaoDTO;
 import br.com.fatecmaua.bunchin.dto.PontoDTO;
 import br.com.fatecmaua.bunchin.model.Funcionario;
 import br.com.fatecmaua.bunchin.model.Link;
+import br.com.fatecmaua.bunchin.model.Organizacao;
 import br.com.fatecmaua.bunchin.model.Ponto;
 import br.com.fatecmaua.bunchin.repository.FuncionarioRepository;
 import br.com.fatecmaua.bunchin.repository.LinkRepository;
@@ -67,6 +69,19 @@ public class FuncionarioController {
             dto.setOrganizacao_id(funcionario.getOrganizacao().getIdOrganizacao());
         }
 	    return dto;
+    }
+
+    private OrganizacaoDTO toOrganizacaoDTO(Organizacao organizacao) {
+        OrganizacaoDTO dto = new OrganizacaoDTO();
+        dto.setIdOrganizacao(organizacao.getIdOrganizacao());
+        dto.setNome(organizacao.getNome());
+        dto.setCnpj(organizacao.getCnpj());
+        dto.setEndereco(organizacao.getEndereco());
+        dto.setTelefone(organizacao.getTelefone());
+        dto.setEmail(organizacao.getEmail());
+        dto.setStatus(organizacao.getStatus());
+        dto.setDataCriacao(organizacao.getDataCriacao());
+        return dto;
     }
 
     // --- FUNCIONARIO CRUD ---
@@ -134,6 +149,14 @@ public class FuncionarioController {
         funcionarioRepository.delete(existing.get());
         funcionarioCachingService.removerCache();
         return ResponseEntity.ok().body("Record deleted successfully.");
+    }
+
+    // --- ORGANIZACAO POST ---
+    @PostMapping("/organizacao")
+    public ResponseEntity<?> createOrganizacao(@RequestBody Organizacao organizacao) {
+        organizacao.setStatus("1");
+        organizacaoRepository.save(organizacao);
+        return ResponseEntity.ok().body("Organização criada com sucesso.");
     }
 
     // --- LOGIN ---
@@ -374,6 +397,4 @@ public class FuncionarioController {
         public Integer getN_registro() { return n_registro; }
         public String getNome() { return nome; }
     }
-
-    // A classe PontoRequest foi removida e substituída por PontoDTO
 }
