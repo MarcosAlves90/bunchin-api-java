@@ -25,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fatecmaua.bunchin.dto.FuncionarioDTO;
 import br.com.fatecmaua.bunchin.dto.OrganizacaoDTO;
+import br.com.fatecmaua.bunchin.dto.OrganizacaoCreateDTO;
 import br.com.fatecmaua.bunchin.dto.PontoDTO;
 import br.com.fatecmaua.bunchin.model.Funcionario;
 import br.com.fatecmaua.bunchin.model.Link;
@@ -153,10 +154,38 @@ public class FuncionarioController {
 
     // --- ORGANIZACAO POST ---
     @PostMapping("/organizacao")
-    public ResponseEntity<?> createOrganizacao(@RequestBody Organizacao organizacao) {
-        organizacao.setStatus("1");
-        organizacaoRepository.save(organizacao);
-        return ResponseEntity.ok().body("Organização criada com sucesso.");
+    public ResponseEntity<?> createOrganizacao(@RequestBody OrganizacaoCreateDTO request) {
+        try {
+            Organizacao organizacao = new Organizacao();
+            organizacao.setNome(request.getNome());
+            organizacao.setCnpj(request.getCnpj());
+            organizacao.setEndereco(request.getEndereco());
+            organizacao.setTelefone(request.getTelefone());
+            organizacao.setEmail(request.getEmail());
+            organizacao.setStatus("1");
+            
+            Organizacao organizacaoSalva = organizacaoRepository.save(organizacao);
+            
+            Funcionario admin = new Funcionario();
+            admin.setNome(request.getAdminNome());
+            admin.setEmail(request.getAdminEmail());
+            admin.setCpf(request.getAdminCpf());
+            admin.setFuncao(request.getAdminFuncao() != null ? request.getAdminFuncao() : "Administrador");
+            admin.setCargo(request.getAdminCargo() != null ? request.getAdminCargo() : "Gerente");
+            admin.setDepartamento(request.getAdminDepartamento() != null ? request.getAdminDepartamento() : "Administrativo");
+            admin.setStatus("0");
+            admin.setSenha(passwordEncoder.encode(request.getAdminSenha()));
+            admin.setOrganizacao(organizacaoSalva);
+            
+            funcionarioRepository.save(admin);
+            funcionarioCachingService.removerCache();
+            
+            return ResponseEntity.ok().body("Organização e administrador criados com sucesso.");
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao criar organização: " + e.getMessage());
+        }
     }
 
     // --- LOGIN ---
