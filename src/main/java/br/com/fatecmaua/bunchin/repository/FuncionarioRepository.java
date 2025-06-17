@@ -1,6 +1,7 @@
 package br.com.fatecmaua.bunchin.repository;
 
 import br.com.fatecmaua.bunchin.model.Funcionario;
+import br.com.fatecmaua.bunchin.projections.FuncionarioSubstringProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,10 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
     
     @Query("SELECT f FROM Funcionario f WHERE f.organizacao.idOrganizacao = :organizacaoId")
     List<Funcionario> findByOrganizacaoId(@Param("organizacaoId") Integer organizacaoId);
+    
+    @Query("SELECT f.n_registro as n_registro, f.nome as nome, f.email as email, f.cpf as cpf FROM Funcionario f")
+    List<FuncionarioSubstringProjection> findAllProjection();
+    
+    @Query("SELECT f.n_registro as n_registro, f.nome as nome, f.email as email, f.cpf as cpf FROM Funcionario f WHERE f.nome LIKE %:nome%")
+    List<FuncionarioSubstringProjection> findByNomeContainingProjection(@Param("nome") String nome);
 }

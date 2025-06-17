@@ -35,6 +35,7 @@ import br.com.fatecmaua.bunchin.model.Link;
 import br.com.fatecmaua.bunchin.model.Organizacao;
 import br.com.fatecmaua.bunchin.model.Ponto;
 import br.com.fatecmaua.bunchin.model.Projeto;
+import br.com.fatecmaua.bunchin.projections.FuncionarioSubstringProjection;
 import br.com.fatecmaua.bunchin.repository.FuncionarioProjetoRepository;
 import br.com.fatecmaua.bunchin.repository.FuncionarioRepository;
 import br.com.fatecmaua.bunchin.repository.LinkRepository;
@@ -149,6 +150,16 @@ public class FuncionarioController {
         return funcionarios.stream()
             .map(this::toDTO)
             .toList();
+    }
+
+    @GetMapping("/funcionario/projection")
+    public List<FuncionarioSubstringProjection> getAllFuncionariosProjection() {
+        return funcionarioRepository.findAllProjection();
+    }
+
+    @GetMapping("/funcionario/projection/busca")
+    public List<FuncionarioSubstringProjection> buscaFuncionariosProjection(@RequestParam("nome") String nome) {
+        return funcionarioRepository.findByNomeContainingProjection(nome);
     }
 
     @PostMapping("/funcionario")
