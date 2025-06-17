@@ -153,14 +153,20 @@ public class FuncionarioController {
     @PostMapping("/funcionario")
     public ResponseEntity<?> createFuncionario(@RequestBody Funcionario funcionario) {
         if (funcionario.getEmail() != null && funcionarioRepository.findByEmail(funcionario.getEmail()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("Email já está em uso por outro funcionário.");
-        }
-        
-        if (funcionario.getCpf() != null && funcionarioRepository.findByCpf(funcionario.getCpf()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("CPF já está em uso por outro funcionário.");
-        }
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(Map.of(
+            "error", "EMAIL_ALREADY_EXISTS",
+            "message", "Email já está em uso por outro funcionário."
+        ));
+}
+
+if (funcionario.getCpf() != null && funcionarioRepository.findByCpf(funcionario.getCpf()).isPresent()) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(Map.of(
+            "error", "CPF_ALREADY_EXISTS",
+            "message", "CPF já está em uso por outro funcionário."
+        ));
+}
         
         funcionario.setStatus("0");
         String randomPassword = funcionario.getSenha();
@@ -180,7 +186,7 @@ public class FuncionarioController {
         if (funcionario.getEmail() != null) {
             Optional<Funcionario> funcionarioComEmail = funcionarioRepository.findByEmail(funcionario.getEmail());
             if (funcionarioComEmail.isPresent() && !funcionarioComEmail.get().getN_registro().equals(existing.get().getN_registro())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email já está em uso por outro funcionário.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "EMAIL_ALREADY_EXISTS", "message", "Email já está em uso por outro funcionário."));
             }
         }
         Funcionario f = existing.get();
