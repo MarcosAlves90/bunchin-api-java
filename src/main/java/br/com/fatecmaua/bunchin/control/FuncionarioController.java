@@ -177,6 +177,12 @@ public class FuncionarioController {
         if (existing.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        if (funcionario.getEmail() != null) {
+            Optional<Funcionario> funcionarioComEmail = funcionarioRepository.findByEmail(funcionario.getEmail());
+            if (funcionarioComEmail.isPresent() && !funcionarioComEmail.get().getN_registro().equals(existing.get().getN_registro())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email já está em uso por outro funcionário.");
+            }
+        }
         Funcionario f = existing.get();
         f.setN_registro(funcionario.getN_registro());
         f.setNome(funcionario.getNome());
