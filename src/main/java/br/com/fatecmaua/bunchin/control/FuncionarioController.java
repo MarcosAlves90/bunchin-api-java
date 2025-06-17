@@ -201,6 +201,23 @@ public class FuncionarioController {
         
         Funcionario funcionario = existing.get();
         
+        List<Projeto> projetosResponsavel = projetoRepository.findByResponsavel(funcionario);
+        
+        for (Projeto projeto : projetosResponsavel) {
+            List<Ponto> pontosComProjeto = pontoRepository.findAll().stream()
+                .filter(ponto -> ponto.getProjeto() != null && ponto.getProjeto().getIdProjeto().equals(projeto.getIdProjeto()))
+                .toList();
+            
+            if (!pontosComProjeto.isEmpty()) {
+                pontoRepository.deleteAll(pontosComProjeto);
+            }
+            
+            List<FuncionarioProjeto> associacoes = funcionarioProjetoRepository.findByProjetoIdProjeto(projeto.getIdProjeto());
+            if (!associacoes.isEmpty()) {
+                funcionarioProjetoRepository.deleteAll(associacoes);
+            }
+        }
+        
         List<Ponto> pontos = pontoRepository.findByFuncionario(funcionario);
         if (!pontos.isEmpty()) {
             pontoRepository.deleteAll(pontos);
@@ -211,12 +228,7 @@ public class FuncionarioController {
             funcionarioProjetoRepository.deleteAll(funcionarioProjetos);
         }
         
-        List<Projeto> projetosResponsavel = projetoRepository.findByResponsavel(funcionario);
         if (!projetosResponsavel.isEmpty()) {
-            for (Projeto projeto : projetosResponsavel) {
-                List<FuncionarioProjeto> associacoes = funcionarioProjetoRepository.findByProjetoIdProjeto(projeto.getIdProjeto());
-                funcionarioProjetoRepository.deleteAll(associacoes);
-            }
             projetoRepository.deleteAll(projetosResponsavel);
         }
         
