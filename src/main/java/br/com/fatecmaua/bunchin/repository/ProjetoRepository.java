@@ -1,6 +1,7 @@
 package br.com.fatecmaua.bunchin.repository;
 
 import br.com.fatecmaua.bunchin.model.Projeto;
+import br.com.fatecmaua.bunchin.model.Funcionario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +17,5 @@ public interface ProjetoRepository extends JpaRepository<Projeto, Integer> {
     
     List<Projeto> findByStatus(String status);
     List<Projeto> findByNomeContainingIgnoreCase(String nome);
+    List<Projeto> findByResponsavel(Funcionario responsavel);
 }

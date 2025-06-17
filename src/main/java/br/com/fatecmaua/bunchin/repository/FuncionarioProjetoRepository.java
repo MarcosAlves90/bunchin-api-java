@@ -1,6 +1,7 @@
 package br.com.fatecmaua.bunchin.repository;
 
 import br.com.fatecmaua.bunchin.model.FuncionarioProjeto;
+import br.com.fatecmaua.bunchin.model.Funcionario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +17,6 @@ public interface FuncionarioProjetoRepository extends JpaRepository<FuncionarioP
     
     @Query("SELECT fp FROM FuncionarioProjeto fp WHERE fp.funcionario.n_registro = :funcionarioId AND fp.projeto.organizacao.idOrganizacao = :organizacaoId AND fp.status = '1'")
     List<FuncionarioProjeto> findByFuncionarioAndOrganizacao(@Param("funcionarioId") Integer funcionarioId, @Param("organizacaoId") Integer organizacaoId);
+    
+    List<FuncionarioProjeto> findByFuncionario(Funcionario funcionario);
 }

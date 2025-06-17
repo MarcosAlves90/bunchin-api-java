@@ -152,6 +152,16 @@ public class FuncionarioController {
 
     @PostMapping("/funcionario")
     public ResponseEntity<?> createFuncionario(@RequestBody Funcionario funcionario) {
+        if (funcionario.getEmail() != null && funcionarioRepository.findByEmail(funcionario.getEmail()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Email já está em uso por outro funcionário.");
+        }
+        
+        if (funcionario.getCpf() != null && funcionarioRepository.findByCpf(funcionario.getCpf()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("CPF já está em uso por outro funcionário.");
+        }
+        
         funcionario.setStatus("0");
         String randomPassword = funcionario.getSenha();
         funcionario.setSenha(passwordEncoder.encode(randomPassword));
@@ -188,9 +198,35 @@ public class FuncionarioController {
         if (existing.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        funcionarioRepository.delete(existing.get());
+        
+        Funcionario funcionario = existing.get();
+        
+        List<Ponto> pontos = pontoRepository.findByFuncionario(funcionario);
+        if (!pontos.isEmpty()) {
+            pontoRepository.deleteAll(pontos);
+        }
+        
+        List<FuncionarioProjeto> funcionarioProjetos = funcionarioProjetoRepository.findByFuncionario(funcionario);
+        if (!funcionarioProjetos.isEmpty()) {
+            funcionarioProjetoRepository.deleteAll(funcionarioProjetos);
+        }
+        
+        List<Projeto> projetosResponsavel = projetoRepository.findByResponsavel(funcionario);
+        for (Projeto projeto : projetosResponsavel) {
+            projeto.setResponsavel(null);
+            projetoRepository.save(projeto);
+        }
+        
+        List<Link> links = linkRepository.findByFuncionario(funcionario);
+        if (!links.isEmpty()) {
+            linkRepository.deleteAll(links);
+        }
+        
+        funcionarioRepository.delete(funcionario);
         funcionarioCachingService.removerCache();
-        return ResponseEntity.ok().body("Record deleted successfully.");
+        pontoCachingService.removerCache();
+        
+        return ResponseEntity.ok().body("Funcionário e dados relacionados deletados com sucesso.");
     }
 
     // --- ORGANIZACAO POST ---
