@@ -577,4 +577,10 @@ public class FuncionarioController {
         public Integer getN_registro() { return n_registro; }
         public String getNome() { return nome; }
     }
+    
+    // --- HEALTH CHECK ---
+    @PostMapping("/health")
+    public String health(@RequestBody String message) {
+        return "yes";
+    }
 }
