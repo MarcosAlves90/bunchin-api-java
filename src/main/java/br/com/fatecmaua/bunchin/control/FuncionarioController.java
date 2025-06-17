@@ -212,9 +212,12 @@ public class FuncionarioController {
         }
         
         List<Projeto> projetosResponsavel = projetoRepository.findByResponsavel(funcionario);
-        for (Projeto projeto : projetosResponsavel) {
-            projeto.setResponsavel(null);
-            projetoRepository.save(projeto);
+        if (!projetosResponsavel.isEmpty()) {
+            for (Projeto projeto : projetosResponsavel) {
+                List<FuncionarioProjeto> associacoes = funcionarioProjetoRepository.findByProjetoIdProjeto(projeto.getIdProjeto());
+                funcionarioProjetoRepository.deleteAll(associacoes);
+            }
+            projetoRepository.deleteAll(projetosResponsavel);
         }
         
         List<Link> links = linkRepository.findByFuncionario(funcionario);
